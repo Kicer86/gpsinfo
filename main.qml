@@ -17,6 +17,8 @@ ApplicationWindow {
                                  positionSource.valid;
 
     property alias _position: positionSource.position
+    property bool _altitudeAvailable: _position.altitudeValid  && !isNaN(_position.altitudeValid)
+    property bool _speedAvailable: _position.speedValid && !isNaN(_position.speed)
 
     Column {
         anchors.fill: parent
@@ -52,19 +54,23 @@ ApplicationWindow {
                 }
 
                 Text {
+                    visible: _altitudeAvailable
                     text: qsTr("altitude") + ":"
                 }
 
                 Text {
+                    visible: _altitudeAvailable
                     text: _position.coordinate.altitude
                 }
 
                 Text {
+                    visible: _speedAvailable
                     text: qsTr("speed") + ":"
                 }
 
                 Text {
-                    text: _position.speed
+                    visible: _speedAvailable
+                    text: _position.speed.toFixed(1) + " m/s (" + (_position.speed * 3.6).toFixed(1) + " km/h)"
                 }
             }
         }
