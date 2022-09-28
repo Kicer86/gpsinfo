@@ -8,6 +8,8 @@ set(CMAKE_AUTOMOC ON)
 
 qt_add_executable(gps-info
     main.cpp
+    satellites_model.cpp
+    satellites_model.hpp
 )
 
 qt_add_qml_module(gps-info
