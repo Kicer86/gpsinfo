@@ -3,6 +3,8 @@ import QtQuick
 import QtQuick.Controls
 import QtPositioning
 
+import gpsinfo
+
 ApplicationWindow {
     visible: true
 
@@ -11,6 +13,10 @@ ApplicationWindow {
 
         active: true
         updateInterval: 3000
+    }
+
+    SatellitesModel {
+        id: satellitesModel
     }
 
     property bool _gpsAvailable: positionSource.sourceError == PositionSource.NoError &&
@@ -31,7 +37,7 @@ ApplicationWindow {
         }
 
         GroupBox {
-            title: qsTr("Location:")
+            title: qsTr("Location") + ":"
 
             Grid {
                 columns: 2
@@ -71,6 +77,31 @@ ApplicationWindow {
                 Text {
                     visible: _speedAvailable
                     text: _position.speed.toFixed(1) + " m/s (" + (_position.speed * 3.6).toFixed(1) + " km/h)"
+                }
+            }
+        }
+
+        GroupBox {
+            title: qsTr("Satellites information") + ":"
+
+            Grid {
+                columns: 2
+                spacing: 5
+
+                Text {
+                    text: qsTr("Satellites in view") + ":"
+                }
+
+                Text {
+                    text: satellitesModel.inViewSatellites
+                }
+
+                Text {
+                    text: qsTr("Satellites in use") + ":"
+                }
+
+                Text {
+                    text: satellitesModel.inUseSatellites
                 }
             }
         }
