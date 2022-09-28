@@ -1,41 +1,72 @@
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick
+import QtQuick.Controls
+import QtPositioning
 
 ApplicationWindow {
     visible: true
 
-    Text {
-        id: rozhowor
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
+    PositionSource {
+        id: positionSource
 
-        text: "Rozhowor"
-        font.pixelSize: 20
-        color: "red"
+        active: true
+        updateInterval: 3000
     }
 
-    SequentialAnimation {
+    property bool _gpsAvailable: positionSource.sourceError == PositionSource.NoError &&
+                                 positionSource.valid;
 
-        running: true
-        loops:   Animation.Infinite
+    property alias _position: positionSource.position
 
-        NumberAnimation {
-            target: rozhowor
-            property: "font.pixelSize"
-            from: 12
-            to: 36
-            duration: 500
-            easing.type: Easing.InOutQuad
+    Column {
+        anchors.fill: parent
+
+        spacing: 5
+
+        Text {
+            text: _gpsAvailable? qsTr("GPS position acquired"): qsTr("no GPS available")
+            color: _gpsAvailable? "darkGreen": "red"
         }
 
-        NumberAnimation {
-            target: rozhowor
-            property: "font.pixelSize"
-            from: 36
-            to: 12
-            duration: 500
-            easing.type: Easing.InOutQuad
-        }
+        GroupBox {
+            title: qsTr("Location:")
+
+            Grid {
+                columns: 2
+                spacing: 5
+
+                Text {
+                    text: qsTr("latitude") + ":"
+                }
+
+                Text {
+                    text: _position.coordinate.latitude
+                }
+
+                Text {
+                    text: qsTr("longitude") + ":"
+                }
+
+                Text {
+                    text: _position.coordinate.longitude
+                }
+
+                Text {
+                    text: qsTr("altitude") + ":"
+                }
+
+                Text {
+                    text: _position.coordinate.altitude
+                }
+
+                Text {
+                    text: qsTr("speed") + ":"
+                }
+
+                Text {
+                    text: _position.speed
+                }
+            }
+            }
     }
 }

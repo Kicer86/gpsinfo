@@ -2,7 +2,7 @@
 project(gps-info)
 cmake_minimum_required(VERSION 3.24)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick Positioning)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -22,5 +22,6 @@ qt_add_qml_module(gps-info
 target_link_libraries(gps-info
     PRIVATE
         Qt::Quick
+        Qt6::Positioning
 )
 
