@@ -22,6 +22,6 @@ qt_add_qml_module(gps-info
 target_link_libraries(gps-info
     PRIVATE
         Qt::Quick
-        Qt6::Positioning
+        Qt::Positioning
 )
 

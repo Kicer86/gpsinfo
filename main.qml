@@ -67,6 +67,6 @@ ApplicationWindow {
                     text: _position.speed
                 }
             }
-            }
+        }
     }
 }
