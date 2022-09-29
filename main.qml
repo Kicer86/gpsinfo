@@ -60,23 +60,23 @@ ApplicationWindow {
                 }
 
                 Text {
-                    visible: _altitudeAvailable
                     text: qsTr("altitude") + ":"
                 }
 
                 Text {
-                    visible: _altitudeAvailable
-                    text: _position.coordinate.altitude
+                    text: _altitudeAvailable?
+                        _position.coordinate.altitude :
+                        "--"
                 }
 
                 Text {
-                    visible: _speedAvailable
                     text: qsTr("speed") + ":"
                 }
 
                 Text {
-                    visible: _speedAvailable
-                    text: _position.speed.toFixed(1) + " m/s (" + (_position.speed * 3.6).toFixed(1) + " km/h)"
+                    text: _speedAvailable?
+                        _position.speed.toFixed(1) + " m/s (" + (_position.speed * 3.6).toFixed(1) + " km/h)" :
+                        "--"
                 }
             }
         }
