@@ -75,7 +75,7 @@ ApplicationWindow {
 
                 Text {
                     text: _position.horizontalAccuracyValid?
-                        _position.horizontalAccuracy + "m" :
+                        _position.horizontalAccuracy.toFixed(1) + "m" :
                         "--"
                     font.pixelSize: 12
                 }
@@ -97,7 +97,7 @@ ApplicationWindow {
 
                 Text {
                     text: _altitudeAvailable?
-                        _position.coordinate.altitude :
+                        _position.coordinate.altitude.toFixed(0) + "m" :
                         "--"
                 }
 
@@ -108,7 +108,7 @@ ApplicationWindow {
 
                 Text {
                     text: _position.verticalAccuracyValid?
-                        _position.verticalAccuracy + "m" :
+                        _position.verticalAccuracy.toFixed(1) + "m" :
                         "--"
                     font.pixelSize: 12
                 }
