@@ -29,7 +29,7 @@ ApplicationWindow {
     Column {
         anchors.fill: parent
 
-        spacing: 5
+        spacing: 20
         padding: 5
 
         Text {
