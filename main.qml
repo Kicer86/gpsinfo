@@ -33,6 +33,8 @@ ApplicationWindow {
         padding: 5
 
         Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+
             text: _gpsAvailable? qsTr("GPS position acquired"): qsTr("no GPS available")
             color: _gpsAvailable? "darkGreen": "red"
         }
@@ -48,6 +50,7 @@ ApplicationWindow {
 
                 columns: 2
                 spacing: 5
+                horizontalItemAlignment: Grid.AlignRight
 
                 Text {
                     text: qsTr("latitude") + ":"
@@ -67,12 +70,25 @@ ApplicationWindow {
 
                 Text {
                     text: qsTr("accuracy") + ":"
+                    font.pixelSize: 14
                 }
 
                 Text {
                     text: _position.horizontalAccuracyValid?
                         _position.horizontalAccuracy + "m" :
                         "--"
+                    font.pixelSize: 12
+                }
+
+                // spacing
+                Item {
+                    height: 10
+                    width: 10
+                }
+
+                Item {
+                    height: 10
+                    width: 10
                 }
 
                 Text {
@@ -87,12 +103,25 @@ ApplicationWindow {
 
                 Text {
                     text: qsTr("accuracy") + ":"
+                    font.pixelSize: 14
                 }
 
                 Text {
                     text: _position.verticalAccuracyValid?
                         _position.verticalAccuracy + "m" :
                         "--"
+                    font.pixelSize: 12
+                }
+
+                // spacing
+                Item {
+                    height: 10
+                    width: 10
+                }
+
+                Item {
+                    height: 10
+                    width: 10
                 }
 
                 Text {
@@ -117,6 +146,7 @@ ApplicationWindow {
 
                 columns: 2
                 spacing: 5
+                horizontalItemAlignment: Grid.AlignRight
 
                 Text {
                     text: qsTr("Satellites in view") + ":"
