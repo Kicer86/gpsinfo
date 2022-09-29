@@ -19,12 +19,12 @@ ApplicationWindow {
         id: satellitesModel
     }
 
-    property bool _gpsAvailable: positionSource.sourceError == PositionSource.NoError &&
-                                 positionSource.valid;
-
     property alias _position: positionSource.position
     property bool _altitudeAvailable: _position.altitudeValid  && !isNaN(_position.altitudeValid)
     property bool _speedAvailable: _position.speedValid && !isNaN(_position.speed)
+    property bool _gpsAvailable: _position.longitudeValid &&
+                                 _position.latitudeValid &&
+                                 positionSource.valid;
 
     Column {
         anchors.fill: parent
