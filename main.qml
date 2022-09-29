@@ -30,6 +30,7 @@ ApplicationWindow {
         anchors.fill: parent
 
         spacing: 5
+        padding: 5
 
         Text {
             text: _gpsAvailable? qsTr("GPS position acquired"): qsTr("no GPS available")
@@ -37,9 +38,14 @@ ApplicationWindow {
         }
 
         GroupBox {
+            width: parent.width - parent.padding * 2
+
             title: qsTr("Location") + ":"
 
             Grid {
+
+                anchors.horizontalCenter: parent.horizontalCenter
+
                 columns: 2
                 spacing: 5
 
@@ -102,9 +108,13 @@ ApplicationWindow {
         }
 
         GroupBox {
+            width: parent.width - parent.padding * 2
+
             title: qsTr("Satellites information") + ":"
 
             Grid {
+                anchors.horizontalCenter: parent.horizontalCenter
+
                 columns: 2
                 spacing: 5
 
