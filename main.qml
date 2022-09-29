@@ -60,12 +60,32 @@ ApplicationWindow {
                 }
 
                 Text {
+                    text: qsTr("accuracy") + ":"
+                }
+
+                Text {
+                    text: _position.horizontalAccuracyValid?
+                        _position.horizontalAccuracy + "m" :
+                        "--"
+                }
+
+                Text {
                     text: qsTr("altitude") + ":"
                 }
 
                 Text {
                     text: _altitudeAvailable?
                         _position.coordinate.altitude :
+                        "--"
+                }
+
+                Text {
+                    text: qsTr("accuracy") + ":"
+                }
+
+                Text {
+                    text: _position.verticalAccuracyValid?
+                        _position.verticalAccuracy + "m" :
                         "--"
                 }
 
