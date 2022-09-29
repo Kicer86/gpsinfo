@@ -130,7 +130,7 @@ ApplicationWindow {
 
                 Text {
                     text: _speedAvailable?
-                        _position.speed.toFixed(1) + " m/s (" + (_position.speed * 3.6).toFixed(1) + " km/h)" :
+                        (_position.speed * 3.6).toFixed(1) + " km/h" :
                         "--"
                 }
             }
