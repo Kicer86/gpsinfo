@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.24)
 find_package(Qt6 REQUIRED COMPONENTS Quick Positioning)
 
 set(CMAKE_AUTOMOC ON)
+set(QT_ANDROID_SIGN_AAB TRUE)
 
 qt_add_executable(gps-info
     main.cpp
