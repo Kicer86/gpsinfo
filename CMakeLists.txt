@@ -31,3 +31,11 @@ target_link_libraries(gps-info
 set_property(TARGET gps-info APPEND PROPERTY
     QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android
 )
+
+set_property(TARGET gps-info APPEND PROPERTY
+    QT_ANDROID_MIN_SDK_VERSION 28
+)
+
+set_property(TARGET gps-info APPEND PROPERTY
+    QT_ANDROID_TARGET_SDK_VERSION 31
+)
