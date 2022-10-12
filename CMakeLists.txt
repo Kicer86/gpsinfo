@@ -30,12 +30,18 @@ target_link_libraries(gps-info
         Qt::Location
 )
 
-set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/android-input)
-set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_MIN_SDK_VERSION 28)
-set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_TARGET_SDK_VERSION 31)
-
 if(ANDROID)
+    find_package(OpenSSL REQUIRED)
     find_program(MAGICK magick REQUIRED)
+
+    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/android-input)
+    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_MIN_SDK_VERSION 28)
+    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_TARGET_SDK_VERSION 31)
+
+    set_property(TARGET gps-info PROPERTY QT_ANDROID_EXTRA_LIBS
+        ${OPENSSL_CRYPTO_LIBRARY}
+        ${OPENSSL_SSL_LIBRARY}
+    )
 
     # generate bitmaps and android manifest file
     add_custom_command(
