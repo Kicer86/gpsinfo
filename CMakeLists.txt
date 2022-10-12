@@ -2,7 +2,7 @@
 project(gps-info)
 cmake_minimum_required(VERSION 3.24)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Positioning)
+find_package(Qt6 REQUIRED COMPONENTS Quick Positioning Location)
 
 set(CMAKE_AUTOMOC ON)
 set(QT_ANDROID_SIGN_AAB TRUE)
@@ -27,6 +27,7 @@ target_link_libraries(gps-info
     PRIVATE
         Qt::Quick
         Qt::Positioning
+        Qt::Location
 )
 
 set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/android-input)

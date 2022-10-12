@@ -2,6 +2,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtPositioning
+import QtLocation
 
 import gpsinfo
 
@@ -164,6 +165,24 @@ ApplicationWindow {
                     text: satellitesModel.inUseSatellites
                 }
             }
+        }
+
+        Plugin {
+            id: mapPlugin
+            name: "osm" // "mapboxgl", "esri", ...
+            // specify plugin parameters if necessary
+            // PluginParameter {
+            //     name:
+            //     value:
+            // }
+        }
+
+        Map {
+            width: 200
+            height: 200
+            plugin: mapPlugin
+            center: QtPositioning.coordinate(59.91, 10.75) // Oslo
+            zoomLevel: 14
         }
     }
 }
