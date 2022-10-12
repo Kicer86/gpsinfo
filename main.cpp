@@ -53,7 +53,7 @@ namespace
 
 int main(int argc, char *argv[])
 {
-#ifdef _ANDROID
+#if defined _ANDROID && !defined NDEBUG
     qInstallMessageHandler(qmlOutput);
 #endif
 
@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
 
     logger = findQmlObject(engine, "logger");
 
-#ifndef _ANDROID
-    logger->setProperty("visible", false);
+#if defined _ANDROID && !defined NDEBUG
+    logger->setProperty("visible", true);
 #endif
 
     return app.exec();

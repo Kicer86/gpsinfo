@@ -200,7 +200,10 @@ ApplicationWindow {
 
                 Text {
                     objectName: "logger"
+
                     width: parent.width
+                    visible: false
+
                     wrapMode: Text.WrapAnywhere
                 }
             }
