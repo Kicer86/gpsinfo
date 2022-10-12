@@ -2,7 +2,14 @@
 project(gps-info)
 cmake_minimum_required(VERSION 3.24)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Positioning Location)
+find_package(Qt6
+    REQUIRED COMPONENTS
+        Quick
+        Positioning
+        Location
+)
+
+find_package(QtClick QUIET)
 
 set(CMAKE_AUTOMOC ON)
 set(QT_ANDROID_SIGN_AAB TRUE)
@@ -28,11 +35,17 @@ target_link_libraries(gps-info
         Qt::Quick
         Qt::Positioning
         Qt::Location
+        $<$<TARGET_EXISTS:QtClick::QtClick>:QtClick::QtClick>
 )
 
 if(ANDROID)
     find_package(OpenSSL REQUIRED)
     find_program(MAGICK magick REQUIRED)
+
+    target_compile_definitions(gps-info
+        PRIVATE
+            _ANDROID
+    )
 
     set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/android-input)
     set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_MIN_SDK_VERSION 28)
