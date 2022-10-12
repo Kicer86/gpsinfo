@@ -191,7 +191,7 @@ ApplicationWindow {
                 width: parent.width
                 height: 300
                 plugin: mapPlugin
-                center: QtPositioning.coordinate(59.91, 10.75) // Oslo
+                center: _position.coordinate
                 zoomLevel: 14
             }
 
