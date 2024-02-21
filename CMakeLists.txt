@@ -2,6 +2,10 @@
 cmake_minimum_required(VERSION 3.24)
 project(gps-info)
 
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+
 find_package(Qt6
     REQUIRED COMPONENTS
         Quick
@@ -25,7 +29,7 @@ qt_add_executable(gps-info
 
 qt_add_qml_module(gps-info
     URI gpsinfo
-    VERSION 1.0
+    VERSION 1.1.1
     RESOURCE_PREFIX /
     QML_FILES
         main.qml
@@ -55,6 +59,8 @@ if(ANDROID)
     set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/android-input)
     set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_MIN_SDK_VERSION 28)
     set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_TARGET_SDK_VERSION 33)
+    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_VERSION_CODE 6)
+    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_VERSION_NAME 1.1.1)
 
     set_property(TARGET gps-info PROPERTY QT_ANDROID_EXTRA_LIBS
         ${OPENSSL_CRYPTO_LIBRARY}
@@ -80,6 +86,7 @@ if(ANDROID)
 
         add_custom_command(
             OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/android-input/res/drawable-${name}/icon.png
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/android-input/res/drawable-${name}
             COMMAND ${MAGICK} convert ${CMAKE_CURRENT_SOURCE_DIR}/res/main_ico.svg -resize ${res}x${res} ${CMAKE_CURRENT_BINARY_DIR}/android-input/res/drawable-${name}/icon.png
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/res/main_ico.svg
         )
