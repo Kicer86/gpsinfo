@@ -29,7 +29,7 @@ qt_add_executable(gps-info
 
 qt_add_qml_module(gps-info
     URI gpsinfo
-    VERSION 1.1.1
+    VERSION 1.1.2
     RESOURCE_PREFIX /
     QML_FILES
         main.qml
@@ -58,9 +58,9 @@ if(ANDROID)
 
     set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/android-input)
     set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_MIN_SDK_VERSION 28)
-    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_TARGET_SDK_VERSION 33)
-    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_VERSION_CODE 6)
-    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_VERSION_NAME 1.1.1)
+    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_TARGET_SDK_VERSION 35)
+    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_VERSION_CODE 9)
+    set_property(TARGET gps-info APPEND PROPERTY QT_ANDROID_VERSION_NAME 1.1.2)
 
     set_property(TARGET gps-info PROPERTY QT_ANDROID_EXTRA_LIBS
         ${OPENSSL_CRYPTO_LIBRARY}
