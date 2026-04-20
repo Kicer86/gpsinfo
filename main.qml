@@ -32,6 +32,13 @@ ApplicationWindow {
         id: flick
         anchors.fill: parent
 
+        // The whole app is intentionally non-pannable: user-level pan
+        // gestures conflict with interactive Map pinch/drag on touch
+        // devices (the Flickable would grab the touch before the Map's
+        // handlers could claim it). Layout still sizes content normally,
+        // so large screens show everything; small screens simply clip.
+        interactive: false
+
         contentWidth: parent.width
         contentHeight: column.implicitHeight
 
