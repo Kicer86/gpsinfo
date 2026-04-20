@@ -221,10 +221,13 @@ ApplicationWindow {
 
                     PinchHandler {
                         target: null
+                        // Allow this handler to claim the pinch gesture even
+                        // if an ancestor (or the Map's internal gesture
+                        // machinery on Android) tries to grab it first.
+                        grabPermissions: PointerHandler.CanTakeOverFromAnything
                         onScaleChanged: (delta) => {
                             map.zoomLevel += Math.log2(delta)
                         }
-                        grabPermissions: PointerHandler.TakeOverForbidden
                     }
 
                     WheelHandler {
