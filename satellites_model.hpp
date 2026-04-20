@@ -30,8 +30,8 @@ private:
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &);
 
 signals:
-    void inViewSatellitesChanged(int) const;
-    void inUseSatellitesChanged(int) const;
+    void inViewSatellitesChanged(int);
+    void inUseSatellitesChanged(int);
 };
 
 #endif
