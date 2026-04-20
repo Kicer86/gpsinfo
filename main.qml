@@ -195,6 +195,8 @@ ApplicationWindow {
                 Map {
                     id: map
 
+                    readonly property color _accent: "#2d7ef7"
+
                     width: parent.width
                     height: 300
 
@@ -225,6 +227,9 @@ ApplicationWindow {
                     PinchHandler {
                         target: null
                         onScaleChanged: (delta) => {
+                            // `delta` is the multiplicative scale change since the
+                            // last emission; log2 converts it into zoom-level units
+                            // (where +1 = 2x zoom), matching Map.zoomLevel semantics.
                             map.zoomLevel += Math.log2(delta)
                         }
                     }
@@ -256,7 +261,7 @@ ApplicationWindow {
                             width: 18
                             height: 18
                             radius: width / 2
-                            color: "#2d7ef7"
+                            color: map._accent
                             border.color: "white"
                             border.width: 3
                             antialiasing: true
@@ -290,7 +295,7 @@ ApplicationWindow {
                             anchors.fill: parent
                             anchors.margins: 10
 
-                            readonly property color strokeColor: "#2d7ef7"
+                            readonly property color strokeColor: map._accent
 
                             onPaint: {
                                 const ctx = getContext("2d");
