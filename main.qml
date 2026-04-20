@@ -287,13 +287,8 @@ ApplicationWindow {
                         border.width: 1
                         antialiasing: true
                         opacity: _inactive ? 0.0 : 1.0
-                        visible: opacity > 0.0
 
                         Behavior on opacity { NumberAnimation { duration: 150 } }
-
-                        // Drop shadow-ish backdrop without pulling in Qt5Compat.
-                        layer.enabled: true
-                        layer.smooth: true
 
                         Canvas {
                             id: crosshair
