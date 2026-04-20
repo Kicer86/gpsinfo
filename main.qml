@@ -188,9 +188,11 @@ ApplicationWindow {
                 Map {
                     width: parent.width
                     height: 300
+
                     plugin: mapPlugin
                     center: _position.coordinate
                     zoomLevel: 14
+                    //gesture.enabled: true
                 }
 
                 Text {
