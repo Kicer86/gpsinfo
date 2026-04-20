@@ -6,10 +6,15 @@
 
 SatellitesModel::SatellitesModel()
 {
+    // Throttle satellite updates to no faster than once every 10 seconds.
+    // Polling satellites is cheap, but the model is used only to display
+    // counters on screen and there is no value in refreshing more often.
+    constexpr int kMinUpdateIntervalMs = 10'000;
+
     QGeoSatelliteInfoSource *satelliteSource = QGeoSatelliteInfoSource::createDefaultSource(this);
     if (satelliteSource)
     {
-        const int updateInterval = std::max(satelliteSource->minimumUpdateInterval(), 10000);
+        const int updateInterval = std::max(satelliteSource->minimumUpdateInterval(), kMinUpdateIntervalMs);
         connect(satelliteSource, &QGeoSatelliteInfoSource::satellitesInViewUpdated, this, &SatellitesModel::satellitesInViewUpdated);
         connect(satelliteSource, &QGeoSatelliteInfoSource::satellitesInUseUpdated, this, &SatellitesModel::satellitesInUseUpdated);
 
