@@ -238,6 +238,12 @@ ApplicationWindow {
 
                     DragHandler {
                         target: null
+                        // Same rationale as PinchHandler above: on Android the
+                        // Map's internal gesture machinery tries to grab the
+                        // pan gesture first, which would leave DragHandler
+                        // inactive and break the "user pan turns off
+                        // follow-mode" state machine.
+                        grabPermissions: PointerHandler.CanTakeOverFromAnything
                         onActiveChanged: if (active) map._followPosition = false
                         onTranslationChanged: (delta) => {
                             map.pan(-delta.x, -delta.y)
