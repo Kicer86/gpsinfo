@@ -35,6 +35,8 @@ qt_add_qml_module(gps-info
     SOURCES
         satellites_model.cpp
         satellites_model.hpp
+        android_settings.cpp
+        android_settings.hpp
 )
 
 

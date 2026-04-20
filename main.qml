@@ -95,8 +95,17 @@ ApplicationWindow {
                 Button {
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: _permissionDenied
-                    text: qsTr("Request permission again")
-                    onClicked: locationPermission.request()
+                    text: qsTr("Open app settings")
+                    onClicked: {
+                        // On Android, request() is a no-op once the user has
+                        // permanently denied the permission, so route them to
+                        // the system app-details page where they can toggle
+                        // it back on. Also try request() first in case this
+                        // is a "soft" denial and the OS will still show a
+                        // dialog.
+                        locationPermission.request();
+                        AndroidSettings.openAppDetailsSettings();
+                    }
                 }
 
                 GroupBox {
