@@ -48,7 +48,16 @@ target_link_libraries(gps-info
 
 if(ANDROID)
     find_package(OpenSSL REQUIRED)
-    find_program(MAGICK magick REQUIRED)
+
+    # Prefer rsvg-convert for SVG rasterization: it renders SVGs directly via
+    # librsvg/cairo and avoids ImageMagick's delegate chain, which on many
+    # systems shells out to Inkscape and fails with D-Bus errors in headless
+    # or sandboxed build environments. Fall back to `magick` if rsvg-convert
+    # is not installed.
+    find_program(RSVG_CONVERT rsvg-convert)
+    if(NOT RSVG_CONVERT)
+        find_program(MAGICK magick REQUIRED)
+    endif()
 
     target_compile_definitions(gps-info
         PRIVATE
@@ -83,10 +92,16 @@ if(ANDROID)
         list(GET resolutions ${i} res)
         list(GET resolution-names ${i} name)
 
+        if(RSVG_CONVERT)
+            set(_convert_cmd ${RSVG_CONVERT} -w ${res} -h ${res} -o ${CMAKE_CURRENT_BINARY_DIR}/android-input/res/drawable-${name}/icon.png ${CMAKE_CURRENT_SOURCE_DIR}/res/main_ico.svg)
+        else()
+            set(_convert_cmd ${MAGICK} ${CMAKE_CURRENT_SOURCE_DIR}/res/main_ico.svg -resize ${res}x${res} ${CMAKE_CURRENT_BINARY_DIR}/android-input/res/drawable-${name}/icon.png)
+        endif()
+
         add_custom_command(
             OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/android-input/res/drawable-${name}/icon.png
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/android-input/res/drawable-${name}
-            COMMAND ${MAGICK} convert ${CMAKE_CURRENT_SOURCE_DIR}/res/main_ico.svg -resize ${res}x${res} ${CMAKE_CURRENT_BINARY_DIR}/android-input/res/drawable-${name}/icon.png
+            COMMAND ${_convert_cmd}
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/res/main_ico.svg
         )
 
