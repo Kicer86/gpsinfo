@@ -34,6 +34,8 @@ PROJECT_ROOT="$(cd -- "${SCRIPT_DIR}/.." &>/dev/null && pwd)"
 : "${ANDROID_SDK_ROOT:=/opt/android-sdk}"
 : "${ANDROID_NDK_ROOT:=/opt/android-ndk}"
 : "${BUILD_DIR:=${PROJECT_ROOT}/build/play-store-release}"
+# AGP 9.x requires JDK 17. Allow override via env.
+: "${JAVA_HOME:=/usr/lib/jvm/java-17-openjdk}"
 
 require_var() {
     local name="$1"
@@ -53,6 +55,14 @@ if [[ ! -f "${GPS_INFO_ANDROID_KEYSTORE_PATH}" ]]; then
     exit 2
 fi
 
+if [[ ! -x "${JAVA_HOME}/bin/javac" ]]; then
+    echo "error: JAVA_HOME does not point to a JDK with javac: ${JAVA_HOME}" >&2
+    echo "       AGP 9.x requires JDK 17. Install it or export JAVA_HOME." >&2
+    exit 2
+fi
+export JAVA_HOME
+export PATH="${JAVA_HOME}/bin:${PATH}"
+
 QT_CMAKE="${QT_ANDROID_ROOT}/bin/qt-cmake"
 if [[ ! -x "${QT_CMAKE}" ]]; then
     echo "error: qt-cmake not found at ${QT_CMAKE}" >&2
@@ -69,11 +79,19 @@ done
 
 export ANDROID_SDK_ROOT ANDROID_NDK_ROOT
 
+# androiddeployqt reads the keystore via these env vars (see
+# `androiddeployqt --help`). Export them so they are visible to the build step.
+export QT_ANDROID_KEYSTORE_PATH="${GPS_INFO_ANDROID_KEYSTORE_PATH}"
+export QT_ANDROID_KEYSTORE_ALIAS="${GPS_INFO_ANDROID_KEYSTORE_ALIAS}"
+export QT_ANDROID_KEYSTORE_STORE_PASS="${GPS_INFO_ANDROID_KEYSTORE_STORE_PASS}"
+export QT_ANDROID_KEYSTORE_KEY_PASS="${GPS_INFO_ANDROID_KEYSTORE_KEY_PASS}"
+
 echo ">>> Project     : ${PROJECT_ROOT}"
 echo ">>> Build dir   : ${BUILD_DIR}"
 echo ">>> Qt (Android): ${QT_ANDROID_ROOT}"
 echo ">>> SDK / NDK   : ${ANDROID_SDK_ROOT} / ${ANDROID_NDK_ROOT}"
-echo ">>> Keystore    : ${GPS_INFO_ANDROID_KEYSTORE_PATH} (alias: ${GPS_INFO_ANDROID_KEYSTORE_ALIAS})"
+echo ">>> JDK         : ${JAVA_HOME}"
+echo ">>> Keystore    : ${QT_ANDROID_KEYSTORE_PATH} (alias: ${QT_ANDROID_KEYSTORE_ALIAS})"
 
 mkdir -p "${BUILD_DIR}"
 
@@ -84,10 +102,7 @@ mkdir -p "${BUILD_DIR}"
     -DCMAKE_BUILD_TYPE=Release \
     -DANDROID_SDK_ROOT="${ANDROID_SDK_ROOT}" \
     -DANDROID_NDK_ROOT="${ANDROID_NDK_ROOT}" \
-    -DGPS_INFO_ANDROID_KEYSTORE_PATH="${GPS_INFO_ANDROID_KEYSTORE_PATH}" \
-    -DGPS_INFO_ANDROID_KEYSTORE_ALIAS="${GPS_INFO_ANDROID_KEYSTORE_ALIAS}" \
-    -DGPS_INFO_ANDROID_KEYSTORE_STORE_PASS="${GPS_INFO_ANDROID_KEYSTORE_STORE_PASS}" \
-    -DGPS_INFO_ANDROID_KEYSTORE_KEY_PASS="${GPS_INFO_ANDROID_KEYSTORE_KEY_PASS}"
+    -DGPS_INFO_ANDROID_SIGN=ON
 
 cmake --build "${BUILD_DIR}" --target aab
 
