@@ -201,9 +201,17 @@ ApplicationWindow {
                     plugin: mapPlugin
                     zoomLevel: 14
 
+                    // Disable the Map's built-in gesture area so only our
+                    // PinchHandler/DragHandler/WheelHandler drive the view.
+                    // Having both active causes the two gesture stacks to
+                    // race for the touch grab on Android, which breaks
+                    // pinch-zoom and makes DragHandler.active unreliable
+                    // (so follow-mode would not turn off on user pan).
+                    gesture.enabled: false
+
                     // When true, the map view auto-centers on every new GPS fix.
-                    // Any user interaction (pan/zoom) turns this off; the
-                    // re-center button turns it back on.
+                    // User pan turns this off; the re-center button turns
+                    // it back on. Zoom does not affect it.
                     property bool followPosition: true
 
                     Component.onCompleted: {
@@ -221,10 +229,6 @@ ApplicationWindow {
 
                     PinchHandler {
                         target: null
-                        // Allow this handler to claim the pinch gesture even
-                        // if an ancestor (or the Map's internal gesture
-                        // machinery on Android) tries to grab it first.
-                        grabPermissions: PointerHandler.CanTakeOverFromAnything
                         onScaleChanged: (delta) => {
                             map.zoomLevel += Math.log2(delta)
                         }
