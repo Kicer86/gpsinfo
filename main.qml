@@ -214,11 +214,6 @@ ApplicationWindow {
                     // it back on. Zoom does not affect it.
                     property bool _followPosition: true
 
-                    Component.onCompleted: {
-                        if (_gpsAvailable)
-                            center = _position.coordinate;
-                    }
-
                     Connections {
                         target: positionSource
                         function onPositionChanged() {
