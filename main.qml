@@ -186,13 +186,88 @@ ApplicationWindow {
                 }
 
                 Map {
+                    id: map
+
                     width: parent.width
                     height: 300
 
                     plugin: mapPlugin
-                    center: _position.coordinate
                     zoomLevel: 14
-                    //gesture.enabled: true
+
+                    // When true, the map view auto-centers on every new GPS fix.
+                    // Any user interaction (pan/zoom) turns this off; the
+                    // re-center button turns it back on.
+                    property bool followPosition: true
+
+                    Component.onCompleted: {
+                        if (_gpsAvailable)
+                            center = _position.coordinate;
+                    }
+
+                    Connections {
+                        target: positionSource
+                        function onPositionChanged() {
+                            if (map.followPosition && _gpsAvailable)
+                                map.center = _position.coordinate;
+                        }
+                    }
+
+                    PinchHandler {
+                        target: null
+                        onActiveChanged: if (active) map.followPosition = false
+                        onScaleChanged: (delta) => {
+                            map.zoomLevel += Math.log2(delta)
+                        }
+                        grabPermissions: PointerHandler.TakeOverForbidden
+                    }
+
+                    WheelHandler {
+                        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                        rotationScale: 1/120
+                        property: "zoomLevel"
+                        onWheel: map.followPosition = false
+                    }
+
+                    DragHandler {
+                        target: null
+                        onActiveChanged: if (active) map.followPosition = false
+                        onTranslationChanged: (delta) => {
+                            map.pan(-delta.x, -delta.y)
+                        }
+                    }
+
+                    // Marker showing current GPS position.
+                    MapQuickItem {
+                        visible: _gpsAvailable
+                        coordinate: _position.coordinate
+                        anchorPoint.x: marker.width / 2
+                        anchorPoint.y: marker.height / 2
+                        zoomLevel: 0   // keep constant pixel size regardless of map zoom
+
+                        sourceItem: Rectangle {
+                            id: marker
+                            width: 18
+                            height: 18
+                            radius: width / 2
+                            color: "#2d7ef7"
+                            border.color: "white"
+                            border.width: 3
+                            antialiasing: true
+                        }
+                    }
+
+                    // Re-center button (only visible when following is off).
+                    Button {
+                        visible: !map.followPosition && _gpsAvailable
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 8
+                        text: qsTr("Re-center")
+                        onClicked: {
+                            map.followPosition = true;
+                            map.center = _position.coordinate;
+                        }
+                    }
                 }
 
                 Text {
