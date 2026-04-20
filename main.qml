@@ -1,4 +1,5 @@
 
+import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtPositioning
@@ -9,10 +10,30 @@ import gpsinfo
 ApplicationWindow {
     visible: true
 
+    // Runtime location permission (Android 6+ / desktop no-op where N/A).
+    // Without this, PositionSource silently produces no fixes when the
+    // user has denied the permission, and the UI would only say
+    // "no GPS available" with no hint about the real cause.
+    LocationPermission {
+        id: locationPermission
+        accuracy: LocationPermission.Precise
+        availability: LocationPermission.WhenInUse
+    }
+
+    property bool _permissionGranted: locationPermission.status === Qt.PermissionStatus.Granted
+    property bool _permissionDenied: locationPermission.status === Qt.PermissionStatus.Denied
+
+    Component.onCompleted: {
+        if (locationPermission.status === Qt.PermissionStatus.Undetermined)
+            locationPermission.request();
+    }
+
     PositionSource {
         id: positionSource
 
-        active: true
+        // Only start the position source once we actually have permission;
+        // starting it earlier on Android just produces silent errors.
+        active: _permissionGranted
         updateInterval: 3000
     }
 
@@ -23,7 +44,8 @@ ApplicationWindow {
     property alias _position: positionSource.position
     property bool _altitudeAvailable: _position.altitudeValid  && !isNaN(_position.altitudeValid)
     property bool _speedAvailable: _position.speedValid && !isNaN(_position.speed)
-    property bool _gpsAvailable: _position.longitudeValid &&
+    property bool _gpsAvailable: _permissionGranted &&
+                                 _position.longitudeValid &&
                                  _position.latitudeValid &&
                                  positionSource.valid;
 
@@ -55,9 +77,26 @@ ApplicationWindow {
 
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    width: parent.width
+                    wrapMode: Text.WordWrap
 
-                    text: _gpsAvailable? qsTr("GPS position acquired"): qsTr("no GPS available")
-                    color: _gpsAvailable? "darkGreen": "red"
+                    text: !_permissionGranted
+                          ? (_permissionDenied
+                              ? qsTr("Location permission denied.\nGrant it in system settings to use the app.")
+                              : qsTr("Requesting location permission..."))
+                          : (_gpsAvailable ? qsTr("GPS position acquired")
+                                           : qsTr("no GPS available"))
+                    color: !_permissionGranted
+                           ? (_permissionDenied ? "red" : "black")
+                           : (_gpsAvailable ? "darkGreen" : "red")
+                }
+
+                Button {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: _permissionDenied
+                    text: qsTr("Request permission again")
+                    onClicked: locationPermission.request()
                 }
 
                 GroupBox {
