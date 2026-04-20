@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.github.kicer86.gpsinfo" android:installLocation="auto" android:versionCode="9" android:versionName="v1.1.2">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto">
     <!-- %%INSERT_PERMISSIONS -->
     <!-- %%INSERT_FEATURES -->
     <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:smallScreens="true"/>
-    <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="35"/>
     <application android:name="org.qtproject.qt.android.bindings.QtApplication" android:hardwareAccelerated="true" android:label="Simple GPS Info" android:requestLegacyExternalStorage="true" android:allowNativeHeapPointerTagging="false" android:allowBackup="true" android:fullBackupOnly="false" android:icon="@drawable/icon">
         <activity android:name="org.qtproject.qt.android.bindings.QtActivity" android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" android:label="Simple GPS Info" android:launchMode="singleTop" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>

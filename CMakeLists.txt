@@ -21,7 +21,6 @@ if(QT_KNOWN_POLICY_QTP0002)
 endif()
 
 set(CMAKE_AUTOMOC ON)
-set(QT_ANDROID_SIGN_AAB TRUE)
 
 qt_add_executable(gps-info
     main.cpp
@@ -101,4 +100,48 @@ if(ANDROID)
     )
 
     add_dependencies(gps-info prepare_android_config)
+
+    # --- Release signing (AAB for Google Play) --------------------------------
+    # Signing is opt-in: enabled when GPS_INFO_ANDROID_KEYSTORE_PATH is set
+    # (via -D on the cmake command line or the release build script, which
+    # in turn reads environment variables). Never commit credentials.
+    set(GPS_INFO_ANDROID_KEYSTORE_PATH       "" CACHE FILEPATH "Path to the Android release keystore (.keystore/.jks).")
+    set(GPS_INFO_ANDROID_KEYSTORE_ALIAS      "" CACHE STRING   "Key alias inside the keystore.")
+    set(GPS_INFO_ANDROID_KEYSTORE_STORE_PASS "" CACHE STRING   "Keystore password.")
+    set(GPS_INFO_ANDROID_KEYSTORE_KEY_PASS   "" CACHE STRING   "Key password (defaults to store password if empty).")
+
+    if(GPS_INFO_ANDROID_KEYSTORE_PATH)
+        if(NOT EXISTS "${GPS_INFO_ANDROID_KEYSTORE_PATH}")
+            message(FATAL_ERROR "Keystore not found: ${GPS_INFO_ANDROID_KEYSTORE_PATH}")
+        endif()
+        if(NOT GPS_INFO_ANDROID_KEYSTORE_ALIAS)
+            message(FATAL_ERROR "GPS_INFO_ANDROID_KEYSTORE_ALIAS must be set when keystore is provided.")
+        endif()
+        if(NOT GPS_INFO_ANDROID_KEYSTORE_STORE_PASS)
+            message(FATAL_ERROR "GPS_INFO_ANDROID_KEYSTORE_STORE_PASS must be set when keystore is provided.")
+        endif()
+        if(NOT GPS_INFO_ANDROID_KEYSTORE_KEY_PASS)
+            set(GPS_INFO_ANDROID_KEYSTORE_KEY_PASS "${GPS_INFO_ANDROID_KEYSTORE_STORE_PASS}")
+        endif()
+
+        set_property(TARGET gps-info PROPERTY QT_ANDROID_SIGN_AAB TRUE)
+        set_property(TARGET gps-info PROPERTY QT_ANDROID_SIGN_APK TRUE)
+        set_property(TARGET gps-info PROPERTY QT_ANDROID_KEYSTORE_PATH       "${GPS_INFO_ANDROID_KEYSTORE_PATH}")
+        set_property(TARGET gps-info PROPERTY QT_ANDROID_KEYSTORE_ALIAS      "${GPS_INFO_ANDROID_KEYSTORE_ALIAS}")
+        set_property(TARGET gps-info PROPERTY QT_ANDROID_KEYSTORE_STORE_PASS "${GPS_INFO_ANDROID_KEYSTORE_STORE_PASS}")
+        set_property(TARGET gps-info PROPERTY QT_ANDROID_KEYSTORE_KEY_PASS   "${GPS_INFO_ANDROID_KEYSTORE_KEY_PASS}")
+
+        # Also expose as cache variables — some Qt versions read those
+        # rather than the target properties when invoking androiddeployqt.
+        set(QT_ANDROID_SIGN_AAB TRUE CACHE BOOL "" FORCE)
+        set(QT_ANDROID_SIGN_APK TRUE CACHE BOOL "" FORCE)
+        set(QT_ANDROID_KEYSTORE_PATH       "${GPS_INFO_ANDROID_KEYSTORE_PATH}"       CACHE FILEPATH "" FORCE)
+        set(QT_ANDROID_KEYSTORE_ALIAS      "${GPS_INFO_ANDROID_KEYSTORE_ALIAS}"      CACHE STRING   "" FORCE)
+        set(QT_ANDROID_KEYSTORE_STORE_PASS "${GPS_INFO_ANDROID_KEYSTORE_STORE_PASS}" CACHE STRING   "" FORCE)
+        set(QT_ANDROID_KEYSTORE_KEY_PASS   "${GPS_INFO_ANDROID_KEYSTORE_KEY_PASS}"   CACHE STRING   "" FORCE)
+
+        message(STATUS "Android release signing ENABLED (keystore: ${GPS_INFO_ANDROID_KEYSTORE_PATH}, alias: ${GPS_INFO_ANDROID_KEYSTORE_ALIAS})")
+    else()
+        message(STATUS "Android release signing DISABLED (no keystore provided). AAB/APK will be unsigned or signed with the debug key.")
+    endif()
 endif()

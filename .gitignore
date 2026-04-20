@@ -1,0 +1,5 @@
+# Android signing secrets — never commit.
+# (IDE/build artifacts are covered by the global gitignore.)
+*.keystore
+*.jks
+android-signing.env
