@@ -221,7 +221,6 @@ ApplicationWindow {
 
                     PinchHandler {
                         target: null
-                        onActiveChanged: if (active) map.followPosition = false
                         onScaleChanged: (delta) => {
                             map.zoomLevel += Math.log2(delta)
                         }
@@ -232,7 +231,6 @@ ApplicationWindow {
                         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                         rotationScale: 1/120
                         property: "zoomLevel"
-                        onWheel: map.followPosition = false
                     }
 
                     DragHandler {
