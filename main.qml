@@ -212,7 +212,7 @@ ApplicationWindow {
                     // When true, the map view auto-centers on every new GPS fix.
                     // User pan turns this off; the re-center button turns
                     // it back on. Zoom does not affect it.
-                    property bool followPosition: true
+                    property bool _followPosition: true
 
                     Component.onCompleted: {
                         if (_gpsAvailable)
@@ -222,7 +222,7 @@ ApplicationWindow {
                     Connections {
                         target: positionSource
                         function onPositionChanged() {
-                            if (map.followPosition && _gpsAvailable)
+                            if (map._followPosition && _gpsAvailable)
                                 map.center = _position.coordinate;
                         }
                     }
@@ -242,7 +242,7 @@ ApplicationWindow {
 
                     DragHandler {
                         target: null
-                        onActiveChanged: if (active) map.followPosition = false
+                        onActiveChanged: if (active) map._followPosition = false
                         onTranslationChanged: (delta) => {
                             map.pan(-delta.x, -delta.y)
                         }
@@ -273,7 +273,7 @@ ApplicationWindow {
                     Rectangle {
                         id: recenterButton
 
-                        readonly property bool _inactive: map.followPosition || !_gpsAvailable
+                        readonly property bool _inactive: map._followPosition || !_gpsAvailable
 
                         width: 44
                         height: 44
@@ -346,7 +346,7 @@ ApplicationWindow {
                             anchors.fill: parent
                             enabled: !recenterButton._inactive
                             onClicked: {
-                                map.followPosition = true;
+                                map._followPosition = true;
                                 map.center = _position.coordinate;
                             }
                         }
