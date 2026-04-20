@@ -256,16 +256,87 @@ ApplicationWindow {
                         }
                     }
 
-                    // Re-center button (only visible when following is off).
-                    Button {
-                        visible: !map.followPosition && _gpsAvailable
+                    // Re-center button: round crosshair icon in the corner,
+                    // as commonly seen in mapping apps.
+                    Rectangle {
+                        id: recenterButton
+
+                        readonly property bool _inactive: map.followPosition || !_gpsAvailable
+
+                        width: 44
+                        height: 44
+                        radius: width / 2
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        anchors.margins: 8
-                        text: qsTr("Re-center")
-                        onClicked: {
-                            map.followPosition = true;
-                            map.center = _position.coordinate;
+                        anchors.margins: 10
+
+                        color: recenterMouse.pressed ? "#e0e0e0" : "white"
+                        border.color: "#b0b0b0"
+                        border.width: 1
+                        antialiasing: true
+                        opacity: _inactive ? 0.0 : 1.0
+                        visible: opacity > 0.0
+
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+
+                        // Drop shadow-ish backdrop without pulling in Qt5Compat.
+                        layer.enabled: true
+                        layer.smooth: true
+
+                        Canvas {
+                            id: crosshair
+                            anchors.fill: parent
+                            anchors.margins: 10
+
+                            readonly property color strokeColor: "#2d7ef7"
+
+                            onPaint: {
+                                const ctx = getContext("2d");
+                                ctx.reset();
+                                const w = width;
+                                const h = height;
+                                const cx = w / 2;
+                                const cy = h / 2;
+                                const r = Math.min(w, h) / 2 - 1;
+
+                                ctx.strokeStyle = strokeColor;
+                                ctx.lineWidth = 2;
+                                ctx.lineCap = "round";
+
+                                // Outer circle
+                                ctx.beginPath();
+                                ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+                                ctx.stroke();
+
+                                // Crosshair lines (with a gap in the middle)
+                                const gap = r * 0.35;
+                                ctx.beginPath();
+                                ctx.moveTo(cx, 0);
+                                ctx.lineTo(cx, cy - gap);
+                                ctx.moveTo(cx, cy + gap);
+                                ctx.lineTo(cx, h);
+                                ctx.moveTo(0, cy);
+                                ctx.lineTo(cx - gap, cy);
+                                ctx.moveTo(cx + gap, cy);
+                                ctx.lineTo(w, cy);
+                                ctx.stroke();
+
+                                // Center dot
+                                ctx.fillStyle = strokeColor;
+                                ctx.beginPath();
+                                ctx.arc(cx, cy, 1.8, 0, 2 * Math.PI);
+                                ctx.fill();
+                            }
+                        }
+
+                        MouseArea {
+                            id: recenterMouse
+                            anchors.fill: parent
+                            enabled: !recenterButton._inactive
+                            onClicked: {
+                                map.followPosition = true;
+                                map.center = _position.coordinate;
+                            }
                         }
                     }
                 }
