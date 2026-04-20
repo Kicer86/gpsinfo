@@ -69,7 +69,8 @@ int main(int argc, char *argv[])
     logger = findQmlObject(engine, "logger");
 
 #if defined _ANDROID && !defined NDEBUG
-    logger->setProperty("visible", true);
+    if (logger)
+        logger->setProperty("visible", true);
 #endif
 
     return app.exec();
